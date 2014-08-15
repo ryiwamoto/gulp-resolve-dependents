@@ -49,7 +49,8 @@ module.exports = function(option) {
             files.forEach(function(file){
                 projectDependencies.addFile(file.path, file.contents);
             });
-            var dependents = projectDependencies.getDependantsOf(path.resolve('/', file.path));
+            var a = file.path;
+            var dependents = projectDependencies.getDependantsOf(path.resolve(file.path));
             var sources = _option.includeOrigFile ? dependents.concat(file.path) : dependents;
             sources.forEach(function(source){
                 _this.push(new gutil.File({
