@@ -4,7 +4,8 @@
   "description": "gulp-resolve-dependents resolve file dependents",
   "main": "index.js",
   "dependencies": {
-    "es6-promise": "^1.0.0"
+    "es6-promise": "^1.0.0",
+    "node-file-dep":"git+https://github.com/ryiwamoto/node-file-dep.git"
   },
   "devDependencies": {},
   "scripts": {
