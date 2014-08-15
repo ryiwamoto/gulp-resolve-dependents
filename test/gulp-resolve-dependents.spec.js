@@ -17,8 +17,10 @@ describe('gulp-resolve-dependents', function(){
             var concated = fs.readFileSync(__dirname + '/results/result.js', {encoding: 'utf8'});
             var expected = fs.readFileSync(__dirname + '/expected/result.js', {encoding:'utf8'});
             expect(concated).toEqual(expected);
-            fs.rmdir(__dirname + '/results/', function(){
-                done();
+            fs.unlink(__dirname + '/results/result.js', function(){
+                fs.rmdir(__dirname + '/results', function(err){
+                    done();
+                });
             });
         });
     });
