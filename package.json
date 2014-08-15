@@ -5,9 +5,18 @@
   "main": "index.js",
   "dependencies": {
     "es6-promise": "^1.0.0",
-    "node-file-dep":"git+https://github.com/ryiwamoto/node-file-dep.git"
+    "glob": "^4.0.5",
+    "gulp-util": "^3.0.0",
+    "lodash": "^2.4.1",
+    "node-file-dep": "git+https://github.com/ryiwamoto/node-file-dep.git",
+    "through2": "^0.6.1",
+    "vinyl-fs": "^0.3.6"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "cheap-ts-reference-parser": "git+https://github.com/ryiwamoto/cheap-ts-reference-parser.git",
+    "gulp": "^3.8.7",
+    "gulp-concat": "^2.3.4"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

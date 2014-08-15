@@ -3,18 +3,18 @@ var _  = require('lodash');
 var through  = require('through2');
 var glob = require('glob');
 var fs = require('fs');
+var path = require('path');
 var vinylFs = require('vinyl-fs');
 var Promise = require('es6-promise').Promise;
 
-const PLUGIN_NAME = 'gulp-resolve-dependants';
+const PLUGIN_NAME = 'gulp-resolve-dependents';
 
 var fileDep = require('node-file-dep');
 
-module.exports = resolveDependants(option) {
+module.exports = function(option) {
     var _option = _.defaults(option, {
         files: null,
         detector: null,
-        read: false,
         includeOrigFile: true,
         basePath: '.'
     });
@@ -43,20 +43,27 @@ module.exports = resolveDependants(option) {
         }
 
         readProjectFiles(_option.files).then(function(files){
-            var projectDependencies = new fileDep.Project(parser, {
+            var projectDependencies = new fileDep.Project(_option.detector, {
                 basePath: _option.basePath
             });
             files.forEach(function(file){
                 projectDependencies.addFile(file.path, file.contents);
             });
-            var dependants = projectDependencies.getDependantsOf(file.path);
-            var sources = _option.includeOrigFile ? dependants.concat(file.path) : dependants;
-            source.forEach(function(source){
-                _this.push(vinylFs.src(source, {read: _option.read}));
+            var dependents = projectDependencies.getDependantsOf(path.resolve('/', file.path));
+            var sources = _option.includeOrigFile ? dependents.concat(file.path) : dependents;
+            sources.forEach(function(source){
+                _this.push(new gutil.File({
+                    base: _option.basePath,
+                    path: source,
+                    contents: fs.readFileSync(source)
+                }));
             });
             callback();
         }, function(err){
-            _this.emit('error', new gutil.PluginError(PLUGIN_NAME, 'Streaming not supported'));
+            _this.emit('error', new gutil.PluginError(PLUGIN_NAME, err));
+            callback();
+        }).catch(function(){
+            _this.emit('error', new gutil.PluginError(PLUGIN_NAME, err));
             callback();
         });
     });
@@ -64,7 +71,7 @@ module.exports = resolveDependants(option) {
 
 function readProjectFiles(pattern){
     return new Promise(function(resolve, reject){
-        glob(files, function(err, matches){
+        glob(pattern, function(err, matches){
             err ? reject(err) : resolve(matches);
         });
     }).then(function(matches){
@@ -72,7 +79,7 @@ function readProjectFiles(pattern){
     });
 }
 
-function readFile(file){
+function readFile(filePath){
     return new Promise(function(resolve, reject){
         fs.readFile(filePath, {encoding: 'utf8'}, function(err, data){
             if(err){
