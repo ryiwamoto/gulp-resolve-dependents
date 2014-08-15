@@ -1,0 +1,23 @@
+{
+  "name": "gulp-resolve-dependents",
+  "version": "0.0.1",
+  "description": "gulp-resolve-dependents resolve file dependents",
+  "main": "index.js",
+  "dependencies": {
+    "es6-promise": "^1.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ryiwamoto/gulp-resolve-dependents.git"
+  },
+  "author": "ryiwamoto",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ryiwamoto/gulp-resolve-dependents/issues"
+  },
+  "homepage": "https://github.com/ryiwamoto/gulp-resolve-dependents"
+}
