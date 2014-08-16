@@ -1,6 +1,6 @@
 {
   "name": "gulp-resolve-dependents",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "gulp-resolve-dependents resolve file dependents",
   "main": "index.js",
   "dependencies": {
