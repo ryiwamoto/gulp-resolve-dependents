@@ -12,85 +12,90 @@ const PLUGIN_NAME = 'gulp-resolve-dependents';
 var fileDep = require('node-file-dep');
 
 module.exports = function(option) {
-    var _option = _.defaults(option, {
-        files: null,
-        detector: null,
-        includeOrigFile: true,
-        basePath: '.'
-    });
+  var _option = _.defaults(option, {
+      files: null,
+      resolver: null,
+      includeOrigFile: true,
+      basePath: '.'
+  });
 
-    if(!_option.files){
-        this.emit('error', new gutil.PluginError(PLUGIN_NAME, 'option.files is required.'));
+  return through.obj(function (file, encoding, callback) {
+      if (!_option.files) {
+        this.emit(
+          'error',
+          new gutil.PluginError(PLUGIN_NAME, 'option.files is required.')
+        );
         return callback();
-    }
+      }
 
-    if(!_option.detector){
-        this.emit('error', new gutil.PluginError(PLUGIN_NAME, 'option.detector is required.'));
+      if (!_option.resolver) {
+        this.emit(
+          'error',
+          new gutil.PluginError(PLUGIN_NAME, 'option.resolver is required.')
+        );
         return callback();
-    }
+      }
 
-    return through.obj(function (file, encoding, callback) {
-        var _this = this;
+      var _this = this;
 
-        if (file.isNull()) {
-            this.push(file);
-            return callback();
-        }
+      if (file.isNull()) {
+        this.push(file);
+        return callback();
+      }
 
-        if (file.isStream()) {
-            this.emit('error', new gutil.PluginError(PLUGIN_NAME, 'Streaming not supported'));
-            return callback();
-        }
+      if (file.isStream()) {
+        this.emit('error', new gutil.PluginError(PLUGIN_NAME, 'Streaming not supported'));
+        return callback();
+      }
 
-        readProjectFiles(_option.files).then(function(files){
-            var projectDependencies = new fileDep.Project(_option.detector, {
-                basePath: _option.basePath
-            });
-            files.forEach(function(file){
-                projectDependencies.addFile(file.path, file.contents);
-            });
-            var dependents = projectDependencies.getDependentsOf(path.resolve(file.path));
-            var sources = _option.includeOrigFile ? dependents.concat(file.path) : dependents;
-            sources.forEach(function(source){
-                _this.push(new gutil.File({
+      readProjectFiles(_option.files).then(function(files){
+          var projectDependencies = new fileDep.Project(_option.resolver, {
+              basePath: _option.basePath
+          });
+          files.forEach(function(file){
+              projectDependencies.addFile(file.path, file.contents);
+          });
+          var dependents = projectDependencies.getDependentsOf(path.resolve(file.path));
+          var sources = _option.includeOrigFile ? dependents.concat(file.path) : dependents;
+          sources.forEach(function(source){
+              _this.push(new gutil.File({
                     base: _option.basePath,
                     path: source,
                     contents: fs.readFileSync(source)
-                }));
-            });
-            callback();
+              }));
+          });
+          callback();
         }, function(err){
-            _this.emit('error', new gutil.PluginError(PLUGIN_NAME, err));
-            callback();
-        }).catch(function(){
-            _this.emit('error', new gutil.PluginError(PLUGIN_NAME, err));
-            callback();
-        });
-    });
+          _this.emit('error', new gutil.PluginError(PLUGIN_NAME, err));
+          callback();
+      }).catch(function(){
+          _this.emit('error', new gutil.PluginError(PLUGIN_NAME, err));
+          callback();
+      });
+  });
 };
 
 function readProjectFiles(pattern){
-    return new Promise(function(resolve, reject){
-        glob(pattern, function(err, matches){
-            err ? reject(err) : resolve(matches);
-        });
-    }).then(function(matches){
-        return Promise.all(matches.map(readFile));
-    });
+  return new Promise(function(resolve, reject){
+      glob(pattern, function(err, matches){
+          err ? reject(err) : resolve(matches);
+      });
+  }).then(function(matches){
+      return Promise.all(matches.map(readFile));
+  });
 }
 
 function readFile(filePath){
-    return new Promise(function(resolve, reject){
-        fs.readFile(filePath, {encoding: 'utf8'}, function(err, data){
-            if(err){
-                reject(err);
-            }else{
-                resolve({
-                    path: filePath,
-                    contents: data
-                });
-            }
-        });
-    });
+  return new Promise(function(resolve, reject){
+      fs.readFile(filePath, {encoding: 'utf8'}, function(err, data){
+          if(err){
+            reject(err);
+          }else{
+            resolve({
+                path: filePath,
+                contents: data
+            });
+          }
+      });
+  });
 }
-
