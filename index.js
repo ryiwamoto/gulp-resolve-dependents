@@ -15,8 +15,8 @@ module.exports = function(option) {
   var _option = _.defaults(option, {
       files: null,
       resolver: null,
-      includeOrigFile: true,
-      basePath: '.'
+      includeSource: true,
+      basePath: process.cwd
   });
 
   return through.obj(function (file, encoding, callback) {
@@ -56,7 +56,7 @@ module.exports = function(option) {
               projectDependencies.addFile(file.path, file.contents);
           });
           var dependents = projectDependencies.getDependentsOf(path.resolve(file.path));
-          var sources = _option.includeOrigFile ? dependents.concat(file.path) : dependents;
+          var sources = _option.includeSource ? dependents.concat(file.path) : dependents;
           sources.forEach(function(source){
               _this.push(new gutil.File({
                     base: _option.basePath,
