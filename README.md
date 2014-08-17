@@ -1,6 +1,7 @@
 # gulp-resolve-dependents
-This plugin resolve dependents of the source file.
 ![alt text](./img.png)
+> This plugin resolve dependents of the source file.
+
 
 ## Example
 ```javascript
