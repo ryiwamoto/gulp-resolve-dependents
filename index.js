@@ -16,7 +16,7 @@ module.exports = function(option) {
       files: null,
       resolver: null,
       includeSource: true,
-      basePath: process.cwd
+      basePath: process.cwd()
   });
 
   return through.obj(function (file, encoding, callback) {
