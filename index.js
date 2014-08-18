@@ -68,8 +68,8 @@ module.exports = function(option) {
         }, function(err){
           _this.emit('error', new gutil.PluginError(PLUGIN_NAME, err));
           callback();
-      }).catch(function(){
-          _this.emit('error', new gutil.PluginError(PLUGIN_NAME, err));
+      }).catch(function(err){
+          _this.emit('error', new gutil.PluginError(PLUGIN_NAME, err.stack));
           callback();
       });
   });
