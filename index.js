@@ -48,12 +48,12 @@ module.exports = function(option) {
         return callback();
       }
 
-      readProjectFiles(_option.files).then(function(files){
+      readProjectFiles(_option.files).then(function(projectFiles){
           var projectDependencies = new fileDep.Project(_option.resolver, {
               basePath: _option.basePath
           });
-          files.forEach(function(file){
-              projectDependencies.addFile(file.path, file.contents);
+          projectFiles.forEach(function(projectFile){
+              projectDependencies.addFile(path.resolve(projectFile.path), projectFile.contents);
           });
           var dependents = projectDependencies.getDependentsOf(path.resolve(file.path));
           var sources = _option.includeSource ? dependents.concat(file.path) : dependents;
