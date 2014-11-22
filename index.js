@@ -53,7 +53,8 @@ module.exports = function(option) {
               basePath: _option.basePath
           });
           files.forEach(function(file){
-              projectDependencies.addFile(file.path, file.contents);
+              projectDependencies.addFile(path.resolve(file.path), file.contents);
+              //projectDependencies.addFile(file.path, file.contents);
           });
           var dependents = projectDependencies.getDependentsOf(path.resolve(file.path));
           var sources = _option.includeSource ? dependents.concat(file.path) : dependents;
